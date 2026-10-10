@@ -27,6 +27,7 @@ import { FindingsChart } from "@/components/findings-chart";
 import { NmapPortMap } from "@/components/nmap-port-map";
 import { AttackChainGraph } from "@/components/attack-chain-graph";
 import { SkyHud } from "@/components/sky-hud";
+import { FixPanel, type FixJob } from "@/components/fix-panel";
 import { skyStats } from "@/components/attack-sky";
 
 const AttackSky = dynamic(() => import("@/components/attack-sky").then((m) => m.AttackSky), {
@@ -292,6 +293,8 @@ export default function ScanPage() {
   const [reportError, setReportError] = useState<string | null>(null);
 
   const [now, setNow] = useState(() => Date.now() / 1000);
+  const [fixOpen, setFixOpen] = useState(false);
+  const [fixJob, setFixJob] = useState<FixJob | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -518,12 +521,13 @@ export default function ScanPage() {
   );
 
   const stats = skyStats(scan);
+  const isRepoTarget = /^https?:\/\/(www\.)?github\.com\/[^/]+\/[^/]+\/?$/i.test((scan.source_repo_url || scan.target).trim());
 
   return (
     <PlatformShell>
       {/* The sky: full screen, findings as stars, attack chain as lines. */}
       <section className="relative h-svh w-full overflow-hidden bg-[#02040c]">
-        <AttackSky scan={scan} onSelect={setSelectedFinding} />
+        <AttackSky scan={scan} onSelect={setSelectedFinding} fixedTitles={fixJob?.fixed_titles} />
         <SkyHud
           scan={scan}
           now={now}
@@ -532,8 +536,14 @@ export default function ScanPage() {
           chainSource={stats.chainSource}
           onDetails={() => document.getElementById("details")?.scrollIntoView({ behavior: "smooth" })}
           onReport={() => router.push(`/report/${scan.scan_id}`)}
+          canFix={isRepoTarget}
+          onFix={() => setFixOpen(true)}
+          fixStatus={fixJob?.status}
+          prUrl={fixJob?.pr_url}
         />
       </section>
+
+      <FixPanel scanId={scan.scan_id} open={fixOpen} onClose={() => setFixOpen(false)} onJob={setFixJob} />
 
       <main id="details" className="page-shell py-6 md:py-8">
         <div className="page-container flex flex-col gap-4">

@@ -12,6 +12,7 @@ from ..core.constants import ALLOWED_TARGETS, REPO_CLONE_ROOT
 from ..core.data_models import ScanRequest, ScanResponse, ScanState, ScanStatus
 from ..db.scans import scans
 from ..services.repo_ingest_service import is_github_repo_url
+from ..services.fix_service import fix_jobs, start_fix_job
 from ..services.scan_service import run_scan_background
 
 router = APIRouter(prefix="/api", tags=["scans"])
@@ -111,3 +112,28 @@ async def list_scans() -> list[dict]:
         }
         for s in scans.values()
     ]
+
+
+@router.post("/scan/{scan_id}/fix")
+async def start_fix(scan_id: str) -> dict:
+    """Turn the scan's findings into a pull request on the scanned repository."""
+    if scan_id not in scans:
+        raise HTTPException(status_code=404, detail="Scan not found")
+    state = scans[scan_id]
+    if state.status != ScanStatus.complete:
+        raise HTTPException(status_code=409, detail="Fixes can be opened once the scan is complete")
+    if not is_github_repo_url(state.source_repo_url or state.target):
+        raise HTTPException(status_code=400, detail="Fixes can only be pushed for GitHub repository targets")
+    if not os.getenv("GITHUB_TOKEN", "").strip():
+        raise HTTPException(status_code=503, detail="GITHUB_TOKEN is not configured on the server")
+    job = start_fix_job(scan_id)
+    return job.to_dict()
+
+
+@router.get("/scan/{scan_id}/fix")
+async def get_fix(scan_id: str) -> dict:
+    """Progress of the fix job for a scan."""
+    job = fix_jobs.get(scan_id)
+    if job is None:
+        return {"scan_id": scan_id, "status": "idle", "steps": [], "files": [], "manual": [], "fixed_titles": [], "pr_url": "", "pr_number": 0, "branch": "", "error": ""}
+    return job.to_dict()

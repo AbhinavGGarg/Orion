@@ -2,7 +2,8 @@ import os
 from langchain_core.language_models import BaseChatModel
 
 
-def get_llm() -> BaseChatModel:
+def get_llm(request_timeout: float | None = None) -> BaseChatModel:
+    """Build the configured chat model. ``request_timeout`` overrides the per-call timeout (seconds)."""
     provider = os.getenv("LLM_PROVIDER", "ollama").lower()
 
     match provider:
@@ -19,7 +20,7 @@ def get_llm() -> BaseChatModel:
                 model=os.getenv("OPENAI_MODEL", "gpt-4o"),
                 api_key=os.getenv("OPENAI_API_KEY"),
                 openai_api_base=os.getenv("OPENAI_BASE_URL"),
-                request_timeout=float(os.getenv("OPENAI_REQUEST_TIMEOUT_SECONDS", "12")),
+                request_timeout=request_timeout or float(os.getenv("OPENAI_REQUEST_TIMEOUT_SECONDS", "12")),
                 temperature=0,
             )
         case "claude":

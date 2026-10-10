@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ChevronDown, FileText, Shield } from "lucide-react";
+import { ArrowRight, ChevronDown, FileText, GitPullRequest, Shield, Wrench } from "lucide-react";
 import { ScanState, Severity } from "@/types/scan";
 import { SEVERITY_COLOR } from "@/components/constellation-graph";
 
@@ -50,9 +50,13 @@ interface Props {
   chainSource: "agent" | "inferred" | "none";
   onDetails: () => void;
   onReport: () => void;
+  canFix?: boolean;
+  onFix?: () => void;
+  fixStatus?: "idle" | "running" | "done" | "failed";
+  prUrl?: string;
 }
 
-export function SkyHud({ scan, now, stars, paths, chainSource, onDetails, onReport }: Props) {
+export function SkyHud({ scan, now, stars, paths, chainSource, onDetails, onReport, canFix, onFix, fixStatus, prUrl }: Props) {
   const isRunning = scan.status === "running" || scan.status === "pending";
   const elapsed = scan.started_at > 0 ? Math.max(0, Math.floor(now - scan.started_at)) : 0;
 
@@ -117,6 +121,22 @@ export function SkyHud({ scan, now, stars, paths, chainSource, onDetails, onRepo
             Details
             <ChevronDown className="h-3.5 w-3.5" />
           </button>
+          {canFix && onFix && (
+            <button
+              type="button"
+              onClick={onFix}
+              disabled={scan.status !== "complete"}
+              title={scan.status === "complete" ? "Rewrite the affected files and open a pull request" : "Available when the scan completes"}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold transition disabled:opacity-40 ${
+                fixStatus === "done" && prUrl
+                  ? "border border-emerald-300/40 bg-emerald-300/15 text-emerald-100 hover:bg-emerald-300/25"
+                  : "bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-950 hover:brightness-110"
+              }`}
+            >
+              {fixStatus === "done" && prUrl ? <GitPullRequest className="h-3.5 w-3.5" /> : <Wrench className="h-3.5 w-3.5" />}
+              {fixStatus === "running" ? "Fixing…" : fixStatus === "done" && prUrl ? "PR opened" : "Fix it"}
+            </button>
+          )}
           <button
             type="button"
             onClick={onReport}

@@ -269,8 +269,11 @@ function Nebulae({ glow }: { glow: THREE.Texture }) {
 
 // ── Stars ────────────────────────────────────────────────────────────────────
 
+const FIXED_COLOR = "#34d399";
+
 interface StarProps {
   star: Graph["stars"][number];
+  fixed: boolean;
   sim: React.MutableRefObject<Map<string, Body>>;
   hovered: boolean;
   dimmed: boolean;
@@ -281,7 +284,7 @@ interface StarProps {
   onClick: (star: Graph["stars"][number]) => void;
 }
 
-function StarNode({ star, sim, hovered, dimmed, reduce, isRunning, textures, onHover, onClick }: StarProps) {
+function StarNode({ star, fixed, sim, hovered, dimmed, reduce, isRunning, textures, onHover, onClick }: StarProps) {
   const group = useRef<THREE.Group>(null);
   const inner = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Sprite>(null);
@@ -289,13 +292,13 @@ function StarNode({ star, sim, hovered, dimmed, reduce, isRunning, textures, onH
   const phase = useMemo(() => (hashString(star.id) % 1000) / 1000 * Math.PI * 2, [star.id]);
   const scaleRef = useRef(0);
 
-  const hex = SEVERITY_COLOR[star.severity];
+  const hex = fixed ? FIXED_COLOR : SEVERITY_COLOR[star.severity];
   const r = star.kind === "waypoint" ? 0.13 : RADIUS[star.severity];
   const coreColor = useMemo(() => {
     const c = new THREE.Color(hex);
-    const boost = star.kind === "target" ? 2.4 : star.severity === "critical" || star.severity === "high" ? 1.9 : star.severity === "info" ? 1.0 : 1.5;
-    return c.lerp(new THREE.Color("#ffffff"), star.kind === "target" ? 0.85 : star.severity === "critical" ? 0.04 : 0.12).multiplyScalar(boost);
-  }, [hex, star.kind, star.severity]);
+    const boost = star.kind === "target" ? 2.4 : fixed ? 1.6 : star.severity === "critical" || star.severity === "high" ? 1.9 : star.severity === "info" ? 1.0 : 1.5;
+    return c.lerp(new THREE.Color("#ffffff"), star.kind === "target" ? 0.85 : star.severity === "critical" && !fixed ? 0.04 : 0.12).multiplyScalar(boost);
+  }, [hex, star.kind, star.severity, fixed]);
 
   useFrame((state) => {
     const b = sim.current.get(star.id);
@@ -506,9 +509,10 @@ interface SceneProps {
   setHoverId: (id: string | null) => void;
   onStarClick: (star: Graph["stars"][number]) => void;
   labels: LabelMap;
+  fixed: Set<string>;
 }
 
-function Scene({ graph, isRunning, reduce, hoverId, focusId, setHoverId, onStarClick, labels }: SceneProps) {
+function Scene({ graph, isRunning, reduce, hoverId, focusId, setHoverId, onStarClick, labels, fixed }: SceneProps) {
   const sim = useRef<Map<string, Body>>(new Map());
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null);
   const { camera } = useThree();
@@ -591,6 +595,7 @@ function Scene({ graph, isRunning, reduce, hoverId, focusId, setHoverId, onStarC
           key={s.id}
           star={s}
           sim={sim}
+          fixed={fixed.has(s.label.trim().toLowerCase())}
           hovered={hoverId === s.id}
           dimmed={hoverId !== null && hoverId !== s.id && !connected.has(s.id)}
           reduce={reduce}
@@ -628,9 +633,12 @@ interface Props {
   scan: ScanState;
   onSelect?: (finding: Finding) => void;
   className?: string;
+  /** Titles of findings that have a fix pushed; their stars turn green. */
+  fixedTitles?: string[];
 }
 
-export function AttackSky({ scan, onSelect, className }: Props) {
+export function AttackSky({ scan, onSelect, className, fixedTitles }: Props) {
+  const fixed = useMemo(() => new Set((fixedTitles ?? []).map((t) => t.trim().toLowerCase())), [fixedTitles]);
   const reduce = useReducedMotion() ?? false;
   const graph = useMemo(() => buildGraph(scan), [scan]);
   const [hoverId, setHoverId] = useState<string | null>(null);
@@ -678,6 +686,7 @@ export function AttackSky({ scan, onSelect, className }: Props) {
           setHoverId={setHoverId}
           onStarClick={onStarClick}
           labels={getLabels}
+          fixed={fixed}
         />
       </Canvas>
 
@@ -686,7 +695,8 @@ export function AttackSky({ scan, onSelect, className }: Props) {
         {graph.stars.map((s) => {
           const hovered = hoverId === s.id;
           const dimmed = hoverId !== null && !hovered && !connected.has(s.id);
-          const hex = SEVERITY_COLOR[s.severity];
+          const isFixed = fixed.has(s.label.trim().toLowerCase());
+          const hex = isFixed ? FIXED_COLOR : SEVERITY_COLOR[s.severity];
           const f = s.finding;
           if (s.kind === "waypoint" && !hovered) return null;
           return (
@@ -704,7 +714,7 @@ export function AttackSky({ scan, onSelect, className }: Props) {
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full" style={{ background: hex, boxShadow: `0 0 10px ${hex}` }} />
                     <span className="font-mono text-[10px] uppercase tracking-wider text-slate-300">
-                      {f.severity} · {f.tool}
+                      {isFixed ? "fixed · " : ""}{f.severity} · {f.tool}
                     </span>
                   </div>
                   <p className="mt-1 text-[13px] font-semibold leading-snug text-white">{f.title}</p>

@@ -16,7 +16,7 @@ Polaris is built for the Crafting Constellations hackathon on top of our earlier
 
 **Repo-native.** Polaris scans source repositories directly, not just live web targets, so it can run before you ship.
 
-**Fixes, not just findings.** Every finding carries a concrete remediation. Copy one fix from a star, or copy the whole prioritised remediation plan from the report.
+**Fixes, not just findings.** Every finding carries a concrete remediation. On a GitHub repository, one click opens a pull request: Polaris finds the file behind each critical, high and medium finding, rewrites it, syntax checks it, and pushes a branch with a `POLARIS_FIXES.md` that explains every change and lists what still needs a human. Fixed stars turn green. Nothing touches your default branch; you review and merge.
 
 ---
 
@@ -33,6 +33,18 @@ Layout is a hand written force simulation, about 80 lines, no graph library, so 
 New stars are born next to the target with an expanding ring and settle into place, so the constellation is drawn live while the agents work. A 2D canvas version of the same thing (`components/attack-constellation.tsx`) is kept for low power devices.
 
 ---
+
+
+## Fix it on GitHub
+
+`backend/services/fix_service.py`. After a repo scan completes, `POST /api/scan/{id}/fix` starts a job that:
+
+1. Takes the critical, high and medium findings (deduplicated, max 6).
+2. Finds the file each one lives in. The scanner evidence usually carries a `path:line`; when it does not, the model picks from the repo's file list.
+3. Asks the model for the fixed version of the whole file, with the rule to change nothing unrelated. Python files are syntax checked, and a result that drops or balloons the file is rejected and handed to a human instead.
+4. Writes `POLARIS_FIXES.md` and opens a pull request on a new `polaris/fixes-<timestamp>` branch through the GitHub Contents API.
+
+The frontend polls `GET /api/scan/{id}/fix` and shows the steps live. Set `GITHUB_TOKEN` on the backend (a token with `public_repo` scope on the account that owns the repos you scan, or `repo` for private ones). The token never reaches the browser. The idea and the branch-then-PR flow were borrowed from [Salus](https://github.com/Aadi-Tiwari/Salus) with permission.
 
 ## How it works
 
