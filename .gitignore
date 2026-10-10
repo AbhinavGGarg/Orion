@@ -1,0 +1,13 @@
+.DS_Store
+.next/
+
+# Next.js auto-generated type validators (belong in .next/types/, not source tree)
+types/validator.ts
+types/routes.d.ts
+types/cache-life.d.ts
+.pnpm-store/
+node_modules/
+
+**/__pycache__/
+**/*.pyc
+**/*.pyo
