@@ -247,16 +247,20 @@ def _paths_in_text(text: str, known: set[str]) -> list[str]:
     return hits
 
 
-def _llm_text(llm, prompt: str) -> str | None:
+def _llm_text(llm, prompt: str) -> tuple[str | None, str]:
+    """Returns (text, error). error is '' on success."""
     try:
         resp = llm.invoke([HumanMessage(content=prompt)])
     except Exception as exc:  # pylint: disable=broad-except
         logging.warning("fix llm call failed: %s", exc)
-        return None
+        return None, f"model call failed: {type(exc).__name__}: {str(exc)[:160]}"
     content = getattr(resp, "content", resp)
     if isinstance(content, list):
         content = "".join(part.get("text", "") if isinstance(part, dict) else str(part) for part in content)
-    return str(content)
+    text = str(content)
+    # Some models wrap their working in think tags; drop it.
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.S).strip()
+    return text, ""
 
 
 def _locate_with_llm(llm, finding: Finding, files: list[str]) -> str | None:
@@ -269,7 +273,7 @@ def _locate_with_llm(llm, finding: Finding, files: list[str]) -> str | None:
         + "\n\nWhich single file should be edited to fix this finding? "
         "Reply with JSON only: {\"path\": \"<path from the list>\"} or {\"path\": null} if no file change can fix it."
     )
-    text = _llm_text(llm, prompt)
+    text, _err = _llm_text(llm, prompt)
     if not text:
         return None
     m = re.search(r"\{[^{}]*\}", text)
@@ -283,9 +287,26 @@ def _locate_with_llm(llm, finding: Finding, files: list[str]) -> str | None:
     return path if isinstance(path, str) and path in files else None
 
 
-def _fix_with_llm(llm, finding: Finding, path: str, original: str) -> tuple[str, str] | None:
+def _extract_file(text: str, original: str) -> str | None:
+    """Pull the rewritten file out of a model reply, tolerating format drift."""
+    # 1. Fenced block (take the longest one; a summary snippet may also be fenced).
+    blocks = re.findall(r"```[^\n]*\n(.*?)```", text, re.S)
+    if blocks:
+        return max(blocks, key=len)
+    # 2. No fences but a SUMMARY marker: everything before it is the file.
+    m = re.search(r"\bSUMMARY\s*:", text)
+    if m:
+        return text[: m.start()].strip("`\n ")
+    # 3. Bare reply that still looks like the file (shares its first real line).
+    first_line = next((ln.strip() for ln in original.splitlines() if ln.strip()), "")
+    if first_line and first_line[:40] in text:
+        return text.strip("`\n ")
+    return None
+
+
+def _fix_with_llm(llm, finding: Finding, path: str, original: str, say) -> tuple[str, str] | None:
     """Return (fixed_content, one_line_summary) or None."""
-    prompt = (
+    base_prompt = (
         "You are a senior application security engineer. Fix exactly one security finding in the file below.\n"
         "Rules:\n"
         "- Keep every existing behaviour that is not part of the vulnerability. Do not refactor, rename or reformat unrelated code.\n"
@@ -299,28 +320,41 @@ def _fix_with_llm(llm, finding: Finding, path: str, original: str) -> tuple[str,
         "```\n<complete fixed file>\n```\n"
         "SUMMARY: <one line describing the change>"
     )
-    text = _llm_text(llm, prompt)
-    if not text:
-        return None
-    m = re.search(r"```[a-zA-Z0-9_+-]*\n(.*?)\n```", text, re.S)
-    if not m:
-        return None
-    fixed = m.group(1)
-    if fixed.endswith("\n") is False and original.endswith("\n"):
-        fixed += "\n"
-    sm = re.search(r"SUMMARY:\s*(.+)", text)
-    summary = sm.group(1).strip() if sm else f"Fix for {finding.title}"
-    if not fixed.strip() or fixed.strip() == original.strip():
-        return None
-    # guard against the model dropping or ballooning the file
-    if len(fixed) < len(original) * 0.5 or len(fixed) > len(original) * 2.5 + 2000:
-        return None
-    if path.endswith(".py"):
-        try:
-            ast.parse(fixed)
-        except SyntaxError:
-            return None
-    return fixed, summary
+    strict_suffix = (
+        "\n\nIMPORTANT: your previous reply could not be parsed. Output NOTHING except one fenced code block "
+        "with the complete file, then the SUMMARY line."
+    )
+
+    for attempt in range(2):
+        text, err = _llm_text(llm, base_prompt + (strict_suffix if attempt else ""))
+        if not text:
+            say(f"  debug: {err or 'empty model reply'}")
+            continue
+        fixed = _extract_file(text, original)
+        if fixed is None:
+            say(f"  debug: reply had no code block (len {len(text)}, starts {text[:60]!r})")
+            continue
+        if not fixed.endswith("\n") and original.endswith("\n"):
+            fixed += "\n"
+        sm = re.search(r"SUMMARY\s*:\s*(.+)", text)
+        summary = sm.group(1).strip() if sm else f"Fix for {finding.title}"
+        if not fixed.strip():
+            say("  debug: model returned an empty file")
+            continue
+        if fixed.strip() == original.strip():
+            say("  debug: model returned the file unchanged")
+            continue
+        if len(fixed) < len(original) * 0.4 or len(fixed) > len(original) * 3 + 3000:
+            say(f"  debug: rewrite size looks wrong ({len(original)} -> {len(fixed)} chars)")
+            continue
+        if path.endswith(".py"):
+            try:
+                ast.parse(fixed)
+            except SyntaxError as exc:
+                say(f"  debug: rewrite does not parse ({exc.msg}, line {exc.lineno})")
+                continue
+        return fixed, summary
+    return None
 
 
 def _actionable(findings: list[Finding]) -> list[Finding]:
@@ -444,7 +478,7 @@ def _run_inner(job: FixJob) -> None:
             job.say(f"  {path} is too large, left for a human")
             continue
         job.say(f"Fixing {path}")
-        result = _fix_with_llm(llm, finding, path, original)
+        result = _fix_with_llm(llm, finding, path, original, job.say)
         if not result:
             job.manual.append(ManualItem(finding.title, f"Could not produce a safe change for `{path}`. Follow the remediation in the report."))
             job.say("  no safe change produced, left for a human")
