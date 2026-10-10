@@ -13,7 +13,7 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
   const reactId = useId();
 
   const renderId = useMemo(
-    () => `orion-mermaid-${reactId.replace(/[:]/g, "")}`,
+    () => `polaris-mermaid-${reactId.replace(/[:]/g, "")}`,
     [reactId],
   );
 

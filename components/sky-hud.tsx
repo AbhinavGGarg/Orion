@@ -95,7 +95,7 @@ export function SkyHud({ scan, now, stars, paths, chainSource, onDetails, onRepo
             <span className="rounded-full border border-white/10 bg-white/8 p-1 text-cyan-200">
               <Shield className="h-3.5 w-3.5" />
             </span>
-            <span className="font-serif text-xl leading-none tracking-tight text-white">Orion</span>
+            <span className="font-serif text-xl leading-none tracking-tight text-white">Polaris</span>
           </Link>
           <div className="min-w-0 rounded-2xl border border-white/10 bg-black/40 px-4 py-2.5 backdrop-blur">
             <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-300">

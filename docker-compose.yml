@@ -29,12 +29,12 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-sonnet-4-6}
       - ALLOWED_TARGETS=${ALLOWED_TARGETS:-target,localhost,127.0.0.1,example.com,scanme.nmap.org}
-      - REPO_CLONE_ROOT=/var/orion/repos
+      - REPO_CLONE_ROOT=/var/polaris/repos
       - REPO_CLONE_TIMEOUT_SECONDS=${REPO_CLONE_TIMEOUT_SECONDS:-180}
       - REPO_CLONE_DEPTH=${REPO_CLONE_DEPTH:-1}
     volumes:
       - ./repos:/repos:ro
-      - orion-repos:/var/orion/repos
+      - polaris-repos:/var/polaris/repos
     networks:
       - pentest-net
     depends_on:
@@ -63,7 +63,7 @@ services:
 
 volumes:
   ollama-data:
-  orion-repos:
+  polaris-repos:
 
 networks:
   pentest-net:

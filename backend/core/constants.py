@@ -24,6 +24,6 @@ _env_allowed_targets = [
 # Always include built-in demo-safe defaults even when env vars are stale.
 ALLOWED_TARGETS = list(dict.fromkeys([*_env_allowed_targets, *_DEFAULT_ALLOWED_TARGETS]))
 
-REPO_CLONE_ROOT = Path(os.getenv("REPO_CLONE_ROOT", "/tmp/orion/repos")).resolve()
+REPO_CLONE_ROOT = Path(os.getenv("REPO_CLONE_ROOT", "/tmp/polaris/repos")).resolve()
 REPO_CLONE_TIMEOUT_SECONDS = int(os.getenv("REPO_CLONE_TIMEOUT_SECONDS", "180"))
 REPO_CLONE_DEPTH = int(os.getenv("REPO_CLONE_DEPTH", "1"))

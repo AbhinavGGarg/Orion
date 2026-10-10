@@ -32,7 +32,7 @@ class ChatResponse(BaseModel):
 
 
 SYSTEM_PROMPT = """
-You are the Orion Help Assistant.
+You are the Polaris Help Assistant.
 
 Goals:
 - Help users run scans, understand statuses, and interpret findings/reports.
@@ -151,11 +151,11 @@ def _local_help_answer(message: str, scan_id: str | None) -> str:
             "what does this website do",
             "what's this website",
             "whats this website",
-            "what is orion",
+            "what is polaris",
         )
     ):
         return (
-            "Orion is an automated security scanning app. "
+            "Polaris is an automated security scanning app. "
             "You can scan a website URL or a public GitHub repo, watch agent-by-agent progress, "
             "and get a detailed vulnerability report with findings and remediation guidance."
         )
@@ -173,13 +173,13 @@ def _local_help_answer(message: str, scan_id: str | None) -> str:
     if any(k in text for k in ("why slow", "taking long", "too long", "stuck")):
         return (
             "Long scans are usually caused by deep network checks or model response delays. "
-            "Orion now enforces shorter timeouts and fallback paths so progress keeps moving. "
+            "Polaris now enforces shorter timeouts and fallback paths so progress keeps moving. "
             "If a stage stalls, refresh the scan page and check the latest stage log line."
         )
 
     if any(k in text for k in ("stream error", "lost connection", "connection lost", "sse", "polling")):
         return (
-            "If live stream drops, Orion now falls back to polling automatically. "
+            "If live stream drops, Polaris now falls back to polling automatically. "
             "So scan updates should keep moving instead of freezing."
         )
 
@@ -208,7 +208,7 @@ def _prefer_local_reply(message: str) -> bool:
         "point of this",
         "what is this",
         "what does this",
-        "what is orion",
+        "what is polaris",
         "run a scan",
         "start a scan",
         "scan steps",
@@ -237,7 +237,7 @@ async def _invoke_llm_with_timeout(prompt: str) -> str:
 
 @router.post("/query", response_model=ChatResponse)
 async def query_chat(request: ChatRequest) -> ChatResponse:
-    """Answer a user help message using the configured Orion LLM provider."""
+    """Answer a user help message using the configured Polaris LLM provider."""
     user_message = request.message.strip()
     if not user_message:
         raise HTTPException(status_code=400, detail="Chat message cannot be empty.")

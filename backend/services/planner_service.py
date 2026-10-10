@@ -1,4 +1,4 @@
-"""Planner module for Orion.
+"""Planner module for Polaris.
 
 Inspects a target (URL or filesystem path), generates an architecture snapshot,
 and uses an LLM to dynamically select the correct security agents.

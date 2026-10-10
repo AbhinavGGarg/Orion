@@ -1,1 +1,1 @@
-"""Orion backend package."""
+"""Polaris backend package."""

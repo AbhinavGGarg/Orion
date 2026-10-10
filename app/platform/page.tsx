@@ -35,7 +35,7 @@ const WORKFLOW_STEPS = [
   {
     icon: BrainCircuit,
     title: "Agent Planning",
-    description: "Orion fingerprints the target and composes an adaptive scan plan.",
+    description: "Polaris fingerprints the target and composes an adaptive scan plan.",
   },
   {
     icon: Radar,
@@ -138,7 +138,7 @@ export default function PlatformPage() {
                   Autonomous vulnerability scanning for websites and repositories.
                 </h1>
                 <p className="max-w-2xl text-base leading-relaxed text-slate-300/85">
-                  Launch autonomous security scans across web targets and repositories using specialized agents. Orion coordinates recon,
+                  Launch autonomous security scans across web targets and repositories using specialized agents. Polaris coordinates recon,
                   exploit simulation, dependency analysis, and report synthesis in one high-trust workflow.
                 </p>
                 <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-3 py-1 text-xs font-mono uppercase tracking-[0.12em] text-cyan-100">

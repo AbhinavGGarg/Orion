@@ -1,4 +1,4 @@
-"""Pydantic models for Orion scan state and API contracts."""
+"""Pydantic models for Polaris scan state and API contracts."""
 
 from enum import Enum
 

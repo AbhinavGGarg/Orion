@@ -1,11 +1,11 @@
-# Render Blueprint — deploys the Orion backend as a Docker web service on the
+# Render Blueprint — deploys the Polaris backend as a Docker web service on the
 # FREE tier (no cost). The frontend deploys separately on Vercel and points at
 # this service via BACKEND_API_URL (see README "Deploy"). A hosted backend has
 # no local Ollama, so it uses an OpenAI-compatible provider; self-hosting still
 # defaults to Ollama.
 services:
   - type: web
-    name: orion-backend
+    name: orion-backend      # keep: renaming a blueprint service makes Render create a new one
     runtime: docker
     dockerfilePath: ./docker/Dockerfile.backend
     dockerContext: .
@@ -22,7 +22,7 @@ services:
       - key: CORS_ALLOW_ORIGINS
         sync: false          # set to your Vercel frontend origin if calling the API directly
       - key: REPO_CLONE_ROOT
-        value: /tmp/orion/repos   # ephemeral scratch — clones are per-scan and disposable
+        value: /tmp/polaris/repos   # ephemeral scratch — clones are per-scan and disposable
       - key: ENFORCE_TARGET_ALLOWLIST
         value: "true"        # hosted instance: only scan sanctioned demo targets
       - key: ALLOWED_TARGETS

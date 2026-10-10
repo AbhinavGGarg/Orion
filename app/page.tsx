@@ -332,7 +332,7 @@ export default function Home() {
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 className="rounded-2xl border border-white/15 bg-white/8 p-2.5 shadow-[0_0_44px_-8px_rgba(165,180,252,0.55)]"
               >
-                <Image src="/image.png" alt="Orion logo" width={44} height={44} className="rounded-xl" />
+                <Image src="/image.png" alt="Polaris logo" width={44} height={44} className="rounded-xl" />
               </motion.div>
 
               <motion.p
@@ -341,7 +341,7 @@ export default function Home() {
                 transition={{ delay: 0.1, duration: 0.4 }}
                 className="text-sm font-semibold uppercase tracking-[0.32em] text-indigo-100/90"
               >
-                Orion
+                Polaris
               </motion.p>
 
               <KineticHeadline reduce={reduce} />
@@ -352,7 +352,7 @@ export default function Home() {
                 transition={{ delay: 0.55, duration: 0.5 }}
                 className="max-w-xl text-sm leading-relaxed text-slate-300/85 md:text-base"
               >
-                Orion scans your code, finds the weak points, and draws the attack paths between them as a constellation. Click a star, get the fix. Self-hosted, so your code never leaves your machine.
+                Polaris scans your code, finds the weak points, and draws the attack paths between them as a constellation. Click a star, get the fix. The north star for your security backlog. Self-hosted, so your code never leaves your machine.
               </motion.p>
 
               <motion.div
@@ -367,7 +367,7 @@ export default function Home() {
                   <span className="h-2 w-2 rounded-full bg-emerald-400/70" />
                 </span>
                 <span className="ml-1 text-slate-500">$</span>
-                <Typewriter text="orion scan ./your-repo --local" reduce={reduce} />
+                <Typewriter text="polaris scan ./your-repo --local" reduce={reduce} />
               </motion.div>
             </div>
           </section>

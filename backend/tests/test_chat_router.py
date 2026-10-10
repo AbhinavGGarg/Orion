@@ -1,4 +1,4 @@
-"""Tests for Orion help chat behavior."""
+"""Tests for Polaris help chat behavior."""
 
 import unittest
 from unittest.mock import patch
@@ -40,7 +40,7 @@ class ChatRouterTests(unittest.IsolatedAsyncioTestCase):
             response = await chat_router.query_chat(request)
 
         self.assertFalse(response.llm_used)
-        self.assertIn("Orion is an automated security scanning app", response.answer)
+        self.assertIn("Polaris is an automated security scanning app", response.answer)
 
     async def test_uses_status_snapshot_with_scan_context(self):
         scan_id = "scan-ctx-1"

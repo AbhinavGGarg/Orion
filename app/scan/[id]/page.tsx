@@ -410,7 +410,7 @@ export default function ScanPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `orion-report-${id.slice(0, 8)}.md`;
+    a.download = `polaris-report-${id.slice(0, 8)}.md`;
     a.click();
     URL.revokeObjectURL(url);
   }

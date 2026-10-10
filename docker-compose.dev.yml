@@ -10,7 +10,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.backend
-    container_name: orion-dev-backend
+    container_name: polaris-dev-backend
     ports:
       # Exposes Backend API on http://localhost:8000
       - "8000:8000"
@@ -19,7 +19,7 @@ services:
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1:8b}
-      - REPO_CLONE_ROOT=/var/orion/repos
+      - REPO_CLONE_ROOT=/var/polaris/repos
       - REPO_CLONE_TIMEOUT_SECONDS=${REPO_CLONE_TIMEOUT_SECONDS:-180}
       - REPO_CLONE_DEPTH=${REPO_CLONE_DEPTH:-1}
       # Allow local dev targets plus the built-in public demo URLs from the frontend
@@ -28,7 +28,7 @@ services:
       # Hot reload the code so you don't have to rebuild docker on every python change
       - ./backend:/app/backend:ro
       - ./repos:/repos:ro
-      - orion-repos:/var/orion/repos
+      - polaris-repos:/var/polaris/repos
       # Allow scanning host local folders directly by absolute path
       - /tmp:/tmp:ro
       - /Users:/Users:ro
@@ -38,10 +38,10 @@ services:
 
   target:
     image: bkimminich/juice-shop
-    container_name: orion-dev-target
+    container_name: polaris-dev-target
     ports:
       # Exposes Juice Shop on http://localhost:3001
       - "3001:3000"
 
 volumes:
-  orion-repos:
+  polaris-repos:

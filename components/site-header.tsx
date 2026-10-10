@@ -22,7 +22,7 @@ export function SiteHeader() {
             <span className="rounded-full border border-white/10 bg-white/8 p-1 text-cyan-200">
               <Shield className="h-3.5 w-3.5" />
             </span>
-            <span className="font-serif text-2xl leading-none tracking-tight text-white">Orion</span>
+            <span className="font-serif text-2xl leading-none tracking-tight text-white">Polaris</span>
           </Link>
 
           <Link

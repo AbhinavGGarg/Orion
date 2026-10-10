@@ -2,27 +2,26 @@
 
 import { useEffect, useRef } from "react";
 
-// The real Orion constellation, normalised to a unit box. Shoulders at the
-// top (Betelgeuse, Bellatrix), the belt in the middle, feet at the bottom
-// (Saiph, Rigel). Drawn faintly behind the hero as a nod to the name.
-const ORION_STARS: { x: number; y: number; r: number }[] = [
-  { x: 0.64, y: 0.1, r: 2.6 }, // Betelgeuse
-  { x: 0.36, y: 0.14, r: 2.1 }, // Bellatrix
-  { x: 0.56, y: 0.5, r: 1.9 }, // Alnitak
-  { x: 0.5, y: 0.52, r: 1.9 }, // Alnilam
-  { x: 0.44, y: 0.54, r: 1.9 }, // Mintaka
-  { x: 0.62, y: 0.9, r: 2.0 }, // Saiph
-  { x: 0.34, y: 0.92, r: 2.7 }, // Rigel
+// The Little Dipper (Ursa Minor), normalised to a unit box. Polaris is the
+// star at the tip of the handle, the one everyone navigates by. Drawn faintly
+// behind the hero as a nod to the name.
+const DIPPER_STARS: { x: number; y: number; r: number; polaris?: boolean }[] = [
+  { x: 0.1, y: 0.08, r: 3.2, polaris: true }, // Polaris
+  { x: 0.27, y: 0.26, r: 1.7 }, // Yildun
+  { x: 0.41, y: 0.44, r: 1.8 }, // Epsilon UMi
+  { x: 0.52, y: 0.62, r: 1.9 }, // Zeta UMi
+  { x: 0.68, y: 0.8, r: 1.7 }, // Eta UMi
+  { x: 0.88, y: 0.7, r: 2.3 }, // Pherkad
+  { x: 0.8, y: 0.5, r: 2.6 }, // Kochab
 ];
-const ORION_LINES: [number, number][] = [
+const DIPPER_LINES: [number, number][] = [
   [0, 1],
-  [0, 2],
-  [1, 4],
+  [1, 2],
   [2, 3],
   [3, 4],
-  [2, 5],
-  [4, 6],
+  [4, 5],
   [5, 6],
+  [6, 3],
 ];
 
 interface Props {
@@ -87,11 +86,11 @@ export function Starfield({ className, density = 2200, constellation = true, red
         const size = Math.min(h * 0.72, w * 0.26);
         const ox = w * 0.86 - size * 0.5;
         const oy = h * 0.5 - size * 0.5;
-        const pt = (i: number) => ({ x: ox + ORION_STARS[i].x * size, y: oy + ORION_STARS[i].y * size });
+        const pt = (i: number) => ({ x: ox + DIPPER_STARS[i].x * size, y: oy + DIPPER_STARS[i].y * size });
 
         ctx.strokeStyle = "rgba(165,180,252,0.22)";
         ctx.lineWidth = 1;
-        for (const [a, b] of ORION_LINES) {
+        for (const [a, b] of DIPPER_LINES) {
           const pa = pt(a);
           const pb = pt(b);
           ctx.beginPath();
@@ -99,21 +98,33 @@ export function Starfield({ className, density = 2200, constellation = true, red
           ctx.lineTo(pb.x, pb.y);
           ctx.stroke();
         }
-        ORION_STARS.forEach((s, i) => {
+        DIPPER_STARS.forEach((s, i) => {
           const p = pt(i);
           const tw = reduce ? 1 : 0.8 + 0.2 * Math.sin(t * 1.7 + i);
-          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, s.r * 6 * tw);
-          g.addColorStop(0, "rgba(199,210,254,0.7)");
+          const glowR = s.r * (s.polaris ? 9 : 6) * tw;
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowR);
+          g.addColorStop(0, s.polaris ? "rgba(255,255,255,0.9)" : "rgba(199,210,254,0.7)");
           g.addColorStop(0.4, "rgba(129,140,248,0.22)");
           g.addColorStop(1, "rgba(129,140,248,0)");
           ctx.fillStyle = g;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, s.r * 6 * tw, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
           ctx.fill();
           ctx.fillStyle = "rgba(255,255,255,0.95)";
           ctx.beginPath();
           ctx.arc(p.x, p.y, s.r * 0.9, 0, Math.PI * 2);
           ctx.fill();
+          if (s.polaris) {
+            const len = s.r * 5 * tw;
+            ctx.strokeStyle = "rgba(255,255,255,0.55)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(p.x - len, p.y);
+            ctx.lineTo(p.x + len, p.y);
+            ctx.moveTo(p.x, p.y - len);
+            ctx.lineTo(p.x, p.y + len);
+            ctx.stroke();
+          }
         });
       }
 

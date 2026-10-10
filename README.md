@@ -1,20 +1,20 @@
-# Orion
+# Polaris
 
 **Every vulnerability is a star. Every attack path is a line between them.**
 
-Orion is a self-hosted AI pentester that scans a web target or a code repository, finds the weak points, works out how they chain together, and draws the result as a live constellation. Each finding is a star, sized and coloured by severity. The attack chain is the bright lines connecting them. The constellation is drawn in real time while the agents work, so you watch the attack surface take shape instead of reading a list afterwards. Click a star and you get the fix.
+Polaris is the star you navigate by. It is a self-hosted AI pentester that scans a web target or a code repository, finds the weak points, works out how they chain together, and draws the result as a live constellation. Each finding is a star, sized and coloured by severity. The attack chain is the bright lines connecting them. The constellation is drawn in real time while the agents work, so you watch the attack surface take shape instead of reading a list afterwards. Click a star and you get the fix.
 
-Orion is built for the Crafting Constellations hackathon on top of our earlier pentesting pipeline. The new part is the constellation layer: a hand-written force simulation and canvas renderer that turns scanner findings and the MITRE-aligned attack chain into a star map.
+Polaris is built for the Crafting Constellations hackathon on top of our earlier pentesting pipeline. The new part is the constellation layer: a hand-written force simulation and canvas renderer that turns scanner findings and the MITRE-aligned attack chain into a star map.
 
 ---
 
-## Why Orion is different
+## Why Polaris is different
 
-**You see the attack, not a list.** Security reports are tables of CVEs. Orion reasons over the findings to build a causal attack chain (initial access, credential access, lateral movement, exfiltration) and shows it as a constellation. Dangerous stars glow brighter, chain edges pulse like signals, and related findings cluster by component.
+**You see the attack, not a list.** Security reports are tables of CVEs. Polaris reasons over the findings to build a causal attack chain (initial access, credential access, lateral movement, exfiltration) and shows it as a constellation. Dangerous stars glow brighter, chain edges pulse like signals, and related findings cluster by component.
 
 **Local and sovereign.** The whole pipeline, including LLM inference, can run on your own machine with a local Ollama model. Your source, your targets, and your findings never have to leave your infrastructure.
 
-**Repo-native.** Orion scans source repositories directly, not just live web targets, so it can run before you ship.
+**Repo-native.** Polaris scans source repositories directly, not just live web targets, so it can run before you ship.
 
 **Fixes, not just findings.** Every finding carries a concrete remediation. Copy one fix from a star, or copy the whole prioritised remediation plan from the report.
 
@@ -61,7 +61,7 @@ Each selected **agent node** runs its toolset, skips the LLM call if the tools p
 
 ## LLM providers
 
-Orion defaults to a **local** model so nothing leaves your machine. Set `LLM_PROVIDER` to switch backends:
+Polaris defaults to a **local** model so nothing leaves your machine. Set `LLM_PROVIDER` to switch backends:
 
 | Provider           | Env var           | Notes                                  |
 | ------------------ | ----------------- | -------------------------------------- |
@@ -97,11 +97,11 @@ docker compose up -d --build
 ## Scanning targets
 
 - **Web target:** submit an `http(s)` URL (from inside the backend container, use `http://host.docker.internal:3001` for the bundled Juice Shop).
-- **Public repo:** submit a repository root URL; Orion clones it inside the backend container and scans that snapshot, nothing is cloned into your workspace.
+- **Public repo:** submit a repository root URL; Polaris clones it inside the backend container and scans that snapshot, nothing is cloned into your workspace.
 
 ## Deploy (live demo)
 
-Orion is built to run locally, but you can stand up a hosted instance for demos. The backend deploys to **Render** and the frontend to **Vercel**.
+Polaris is built to run locally, but you can stand up a hosted instance for demos. The backend deploys to **Render** and the frontend to **Vercel**.
 
 **Backend (Render).** The repo ships a `render.yaml` blueprint. In Render, create a new Blueprint from this repo; it builds `docker/Dockerfile.backend` as a web service. Set these secrets in the dashboard (they are `sync: false` in the blueprint, never committed): `OPENAI_API_KEY`, `OPENAI_MODEL`, and optionally `CORS_ALLOW_ORIGINS`. A hosted instance has no local Ollama, so it uses any OpenAI-compatible provider (set `OPENAI_BASE_URL` if it is not OpenAI itself). The blueprint uses Render's **free** tier ($0); it sleeps after ~15 min idle (expect a slow first request) and has 512MB RAM, so very heavy scans may need a bump to a paid plan. Repo clones use ephemeral storage, so no paid disk is required.
 
@@ -111,7 +111,7 @@ Orion is built to run locally, but you can stand up a hosted instance for demos.
 
 ## Responsible use
 
-Orion is for testing systems you own or are explicitly authorised to assess. Scanning targets without permission may be illegal. By default, only an allowlist of safe public examples (`example.com`, `scanme.nmap.org`, `testphp.vulnweb.com`) is treated as sanctioned; keep `ENFORCE_TARGET_ALLOWLIST=true` in shared or production deployments.
+Polaris is for testing systems you own or are explicitly authorised to assess. Scanning targets without permission may be illegal. By default, only an allowlist of safe public examples (`example.com`, `scanme.nmap.org`, `testphp.vulnweb.com`) is treated as sanctioned; keep `ENFORCE_TARGET_ALLOWLIST=true` in shared or production deployments.
 
 ## License
 

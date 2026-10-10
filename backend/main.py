@@ -1,4 +1,4 @@
-"""Orion — Agentic Penetration Testing System — FastAPI backend."""
+"""Polaris — Agentic Penetration Testing System — FastAPI backend."""
 
 import os
 
@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routers.chat_router import router as chat_router
 from .routers.scan_router import router as scan_router
 
-app = FastAPI(title="Orion Pentest API")
+app = FastAPI(title="Polaris Pentest API")
 
 _origins_env = os.getenv(
     "CORS_ALLOW_ORIGINS", "http://localhost:3000,http://frontend:3000"
@@ -26,13 +26,13 @@ app.add_middleware(
 @app.get("/hello")
 def hello():
     """Health check — kept for backwards compatibility."""
-    return {"message": "Orion Pentest API is running"}
+    return {"message": "Polaris Pentest API is running"}
 
 
 @app.get("/")
 def root():
     """Root health endpoint so platform health checks (e.g. Render) get a 200."""
-    return {"status": "ok", "service": "Orion Pentest API"}
+    return {"status": "ok", "service": "Polaris Pentest API"}
 
 
 app.include_router(scan_router)

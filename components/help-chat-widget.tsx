@@ -32,15 +32,15 @@ function localFallbackAnswer(message: string): string {
     || text.includes("what does this site do")
     || text.includes("what does this website do")
     || text.includes("what is this website")
-    || text.includes("what is orion")
+    || text.includes("what is polaris")
   ) {
-    return "Orion is an AI security scanner. It checks website URLs and public GitHub repos, shows live stage-by-stage progress, and produces a report with findings plus remediation guidance.";
+    return "Polaris is an AI security scanner. It checks website URLs and public GitHub repos, shows live stage-by-stage progress, and produces a report with findings plus remediation guidance.";
   }
   if (text.includes("status") || text.includes("progress")) {
     return "Ask me from an active scan page and I can help explain the stage, current status, and what happens next.";
   }
   if (text.includes("slow") || text.includes("stuck") || text.includes("taking long")) {
-    return "If a scan feels slow, check the active stage in Agent Progress. Network-heavy checks can take longer, but Orion now uses tighter timeouts and fallbacks to keep scans moving.";
+    return "If a scan feels slow, check the active stage in Agent Progress. Network-heavy checks can take longer, but Polaris now uses tighter timeouts and fallbacks to keep scans moving.";
   }
   if (text.includes("run") || text.includes("start")) {
     return "Paste a website URL or public GitHub repository on the homepage, click Run Scan, then open the completed scan report when the pipeline finishes.";
@@ -116,7 +116,7 @@ export function HelpChatWidget() {
         <div className="surface-panel flex h-[31rem] w-[22rem] flex-col overflow-hidden border-white/15 bg-[#050c18]/95 shadow-[0_25px_60px_-32px_rgba(34,211,238,0.45)] backdrop-blur-xl">
           <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <div>
-              <p className="text-sm font-semibold text-white">Orion Assistant</p>
+              <p className="text-sm font-semibold text-white">Polaris Assistant</p>
               <p className="text-[11px] font-mono uppercase tracking-wider text-cyan-200/75">
                 Help & Support
               </p>
