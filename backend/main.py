@@ -29,5 +29,11 @@ def hello():
     return {"message": "Orion Pentest API is running"}
 
 
+@app.get("/")
+def root():
+    """Root health endpoint so platform health checks (e.g. Render) get a 200."""
+    return {"status": "ok", "service": "Orion Pentest API"}
+
+
 app.include_router(scan_router)
 app.include_router(chat_router)

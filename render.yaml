@@ -9,16 +9,12 @@ services:
     runtime: docker
     dockerfilePath: ./docker/Dockerfile.backend
     dockerContext: .
-    # Bind to the port Render assigns ($PORT) instead of the fixed 8000.
-    dockerCommand: sh -c "uv run fastapi run backend/main.py --host 0.0.0.0 --port ${PORT:-8000}"
     plan: free               # $0. Trade-offs: 512MB RAM, sleeps after ~15min idle (slow first request).
-    healthCheckPath: /
+    healthCheckPath: /hello
     autoDeploy: true
     envVars:
       - key: LLM_PROVIDER
         value: openai        # OpenAI-compatible endpoint (no local Ollama in the cloud)
-      - key: OPENAI_BASE_URL
-        value: https://api.featherless.ai/v1
       - key: OPENAI_API_KEY
         sync: false          # set in the Render dashboard — never commit a key
       - key: OPENAI_MODEL
