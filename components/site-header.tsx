@@ -7,7 +7,7 @@ import { ArrowLeft, Shield } from "lucide-react";
 export function SiteHeader() {
   const pathname = usePathname();
 
-  if (pathname === "/") {
+  if (pathname === "/" || pathname.startsWith("/scan/")) {
     return null;
   }
 

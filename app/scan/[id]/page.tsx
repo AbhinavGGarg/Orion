@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -25,7 +26,13 @@ import { EvidenceDrawer } from "@/components/evidence-drawer";
 import { FindingsChart } from "@/components/findings-chart";
 import { NmapPortMap } from "@/components/nmap-port-map";
 import { AttackChainGraph } from "@/components/attack-chain-graph";
-import { AttackConstellation } from "@/components/attack-constellation";
+import { SkyHud } from "@/components/sky-hud";
+import { skyStats } from "@/components/attack-sky";
+
+const AttackSky = dynamic(() => import("@/components/attack-sky").then((m) => m.AttackSky), {
+  ssr: false,
+  loading: () => <div className="h-full w-full bg-[#02040c]" />,
+});
 import { ReportModal } from "@/components/report-modal";
 import { Finding, ScanState } from "@/types/scan";
 import { apiUrl, parseErrorDetail } from "@/lib/api";
@@ -510,10 +517,26 @@ export default function ScanPage() {
     },
   );
 
+  const stats = skyStats(scan);
+
   return (
     <PlatformShell>
-      <main className="page-shell h-[calc(100svh-4rem)] overflow-hidden py-4 md:py-5">
-        <div className="page-container flex h-full min-h-0 flex-col gap-4">
+      {/* The sky: full screen, findings as stars, attack chain as lines. */}
+      <section className="relative h-svh w-full overflow-hidden bg-[#02040c]">
+        <AttackSky scan={scan} onSelect={setSelectedFinding} />
+        <SkyHud
+          scan={scan}
+          now={now}
+          stars={stats.stars}
+          paths={stats.paths}
+          chainSource={stats.chainSource}
+          onDetails={() => document.getElementById("details")?.scrollIntoView({ behavior: "smooth" })}
+          onReport={() => router.push(`/report/${scan.scan_id}`)}
+        />
+      </section>
+
+      <main id="details" className="page-shell py-6 md:py-8">
+        <div className="page-container flex flex-col gap-4">
           <GlassPanel className="p-4 md:p-5">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-3">
@@ -607,17 +630,8 @@ export default function ScanPage() {
             ))}
           </section>
 
-          <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+          <div>
             <div className="space-y-4 pb-1 md:space-y-6">
-              <section className="space-y-3">
-                <SectionHeading
-                  kicker="Attack Constellation"
-                  title="Every finding is a star. Every attack path is a line."
-                  description="The constellation is drawn live as the agents discover findings. Hover a star for details, click it for the fix."
-                />
-                <AttackConstellation scan={scan} onSelect={setSelectedFinding} className="h-[480px] md:h-[560px]" />
-              </section>
-
               <section className="grid gap-6 lg:grid-cols-12">
                 <div className="col-span-12 grid gap-6 lg:col-span-8">
                   <LiveActivityConsole

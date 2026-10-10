@@ -22,13 +22,15 @@ Orion is built for the Crafting Constellations hackathon on top of our earlier p
 
 ## The constellation
 
-`components/attack-constellation.tsx` does the drawing. It has no graph library behind it; the physics is about 80 lines so it stays easy to explain:
+The scan page opens on a full screen 3D sky (`components/attack-sky.tsx`, built with three.js through react-three-fiber). Each finding is a glowing sphere, sized and coloured by severity, with a bloom pass so the dangerous ones burn brighter. The attack chain from the attack-chain node is drawn as lines between them with signal pulses running along each path. Faint lines connect findings in the same file. The target sits in the middle with a pulse ring while the scan is running. Drag to orbit, scroll to zoom, hover a star to isolate its paths, click it to fly to it and open the fix. The Details button drops down to the console, findings list and report.
+
+Layout is a hand written force simulation, about 80 lines, no graph library, so it stays easy to explain:
 
 1. Every star pushes every other star away, so they spread out.
 2. Every link pulls its two stars toward a rest distance, so attack paths stay tight.
 3. Everything drifts gently toward the centre, so nothing flies off.
 
-Stars are born near the target with an expanding ring, then settle. Bright gradient lines are attack chain edges from the attack-chain node (or inferred from findings when the agent has not run yet). Faint dashed lines connect findings in the same file. Hover a star to isolate its paths, drag it to rearrange, click it to open the fix.
+New stars are born next to the target with an expanding ring and settle into place, so the constellation is drawn live while the agents work. A 2D canvas version of the same thing (`components/attack-constellation.tsx`) is kept for low power devices.
 
 ---
 
