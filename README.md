@@ -2,7 +2,7 @@
 
 **Every vulnerability is a star. Every attack path is a line between them.**
 
-Polaris is the star you navigate by. It is a self-hosted AI pentester that scans a web target or a code repository, finds the weak points, works out how they chain together, and draws the result as a live constellation. Each finding is a star, sized and coloured by severity. The attack chain is the bright lines connecting them. The constellation is drawn in real time while the agents work, so you watch the attack surface take shape instead of reading a list afterwards. Click a star and you get the fix.
+Polaris is the star you navigate by. It is a self-hosted AI pentester that scans a web target or a code repository, finds the weak points, works out how they chain together, and draws the result as a live constellation. Each finding is a star, sized and coloured by severity. The attack chain appears as bright lines connecting them. The constellation is drawn in real time while the agents work, so you watch the attack surface take shape instead of reading a list afterwards. Click a star and you get the fix.
 
 Polaris is built for the Crafting Constellations hackathon on top of our earlier pentesting pipeline. The new part is the constellation layer: a hand-written force simulation and canvas renderer that turns scanner findings and the MITRE-aligned attack chain into a star map.
 
@@ -24,7 +24,7 @@ Polaris is built for the Crafting Constellations hackathon on top of our earlier
 
 The scan page opens on a full screen 3D sky (`components/attack-sky.tsx`, built with three.js through react-three-fiber). Each finding is a glowing sphere, sized and coloured by severity, with a bloom pass so the dangerous ones burn brighter. The attack chain from the attack-chain node is drawn as lines between them with signal pulses running along each path. Faint lines connect findings in the same file. The target sits in the middle with a pulse ring while the scan is running. Drag to orbit, scroll to zoom, hover a star to isolate its paths, click it to fly to it and open the fix. The Details button drops down to the console, findings list and report.
 
-Layout is a hand written force simulation, about 80 lines, no graph library, so it stays easy to explain:
+Layout uses a hand-written force simulation without a graph library, so it stays easy to explain:
 
 1. Every star pushes every other star away, so they spread out.
 2. Every link pulls its two stars toward a rest distance, so attack paths stay tight.
@@ -33,7 +33,6 @@ Layout is a hand written force simulation, about 80 lines, no graph library, so 
 New stars are born next to the target with an expanding ring and settle into place, so the constellation is drawn live while the agents work. A 2D canvas version of the same thing (`components/attack-constellation.tsx`) is kept for low power devices.
 
 ---
-
 
 ## Fix it on GitHub
 
@@ -109,7 +108,7 @@ docker compose up -d --build
 ## Scanning targets
 
 - **Web target:** submit an `http(s)` URL (from inside the backend container, use `http://host.docker.internal:3001` for the bundled Juice Shop).
-- **Public repo:** submit a repository root URL; Polaris clones it inside the backend container and scans that snapshot, nothing is cloned into your workspace.
+- **Public repo:** submit a repository root URL. Polaris clones it inside the backend container and scans that snapshot; nothing is cloned into your workspace.
 
 ## Deploy (live demo)
 
