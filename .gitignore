@@ -1,5 +1,9 @@
 .DS_Store
 .next/
+.env
+.env.*
+!.env.example
+.venv/
 
 # Next.js auto-generated type validators (belong in .next/types/, not source tree)
 types/validator.ts

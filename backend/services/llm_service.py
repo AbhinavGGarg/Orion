@@ -23,6 +23,18 @@ def get_llm(request_timeout: float | None = None) -> BaseChatModel:
                 request_timeout=request_timeout or float(os.getenv("OPENAI_REQUEST_TIMEOUT_SECONDS", "12")),
                 temperature=0,
             )
+        case "groq":
+            from langchain_openai import ChatOpenAI
+            api_key = os.getenv("GROQ_API_KEY")
+            if not api_key:
+                raise ValueError("Set GROQ_API_KEY when LLM_PROVIDER=groq")
+            return ChatOpenAI(
+                model=os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
+                api_key=api_key,
+                openai_api_base="https://api.groq.com/openai/v1",
+                request_timeout=request_timeout or float(os.getenv("GROQ_REQUEST_TIMEOUT_SECONDS", "120")),
+                temperature=0,
+            )
         case "claude":
             from langchain_anthropic import ChatAnthropic
             return ChatAnthropic(
@@ -31,4 +43,4 @@ def get_llm(request_timeout: float | None = None) -> BaseChatModel:
                 temperature=0,
             )
         case _:
-            raise ValueError(f"Unknown LLM_PROVIDER: {provider!r}. Choose: ollama | openai | claude")
+            raise ValueError(f"Unknown LLM_PROVIDER: {provider!r}. Choose: ollama | openai | groq | claude")

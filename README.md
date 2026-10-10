@@ -78,9 +78,31 @@ Polaris defaults to a **local** model so nothing leaves your machine. Set `LLM_P
 | ------------------ | ----------------- | -------------------------------------- |
 | `ollama` (default) | `OLLAMA_MODEL`    | Fully local inference                  |
 | `openai`           | `OPENAI_MODEL`    | OpenAI-compatible (incl. self-hosted)  |
+| `groq`             | `GROQ_MODEL`       | Groq API, requires `GROQ_API_KEY`         |
 | `claude`           | `ANTHROPIC_MODEL` | Optional, for comparison               |
 
 To run your own fine-tuned checkpoint, serve it behind any OpenAI-compatible endpoint (e.g. vLLM) and point `OPENAI_BASE_URL` at it.
+
+### Use Groq
+
+Create a `.env` file in the project root with these settings, then add your key from the [Groq console](https://console.groq.com/keys):
+
+```dotenv
+LLM_PROVIDER=groq
+GROQ_API_KEY=
+GROQ_MODEL=openai/gpt-oss-120b
+GROQ_REQUEST_TIMEOUT_SECONDS=120
+SCAN_LLM_TIMEOUT_SECONDS=120
+CHAT_LLM_TIMEOUT_SECONDS=30
+```
+
+The key stays on the backend. Groq uses the existing OpenAI-compatible client at `https://api.groq.com/openai/v1`, as documented in the [Groq API guide](https://console.groq.com/docs/openai). Planning, findings, attack chains, reports, fixes, and model-backed help chat all use this provider. Scan and chat timeouts above allow more time for remote inference. Source excerpts and scan context included in prompts are sent to Groq.
+
+Groq's free plan has model-specific [request and token limits](https://console.groq.com/docs/rate-limits). Large or frequent scans can exceed these limits.
+
+Start the backend and test target with `docker compose -f docker-compose.dev.yml up -d --build`, then run `pnpm install` and `pnpm dev`. Ollama is not needed for this setup. For the fully containerised Groq setup, use `docker compose up -d --build --no-deps backend frontend target` to skip the Ollama service.
+
+To run the API without Docker, use `uv run --env-file .env fastapi dev backend/main.py`. Install the scanner tools separately for actual scans; the Docker backend includes them.
 
 ## Quick start (development)
 
