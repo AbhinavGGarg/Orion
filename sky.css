@@ -1,0 +1,56 @@
+[data-constellation]{min-width:0;width:100%;position:relative;isolation:isolate}
+.polaris-constellation{color:#cbd5e1;font-family:var(--font-body,sans-serif);min-width:0}
+.sky-viewport{position:relative;height:490px;overflow:hidden;border:1px solid #ffffff14;border-radius:18px;background:#02040c}
+.sky-viewport>canvas{display:block;position:absolute;inset:0;width:100%;height:100%;touch-action:none;z-index:0}
+.sky-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.sky-label{position:absolute;visibility:hidden;transform:translateX(-50%);width:max-content;max-width:155px;padding:7px 4px;border:0;border-radius:5px;background:transparent;color:#cbd5e1;font:11px/1.35 var(--font-mono,monospace);text-align:center;text-shadow:0 1px 8px #000;pointer-events:auto;cursor:pointer;overflow-wrap:anywhere}
+.sky-target{font-size:13px;font-weight:600;color:#fff;max-width:220px}
+.sky-label:hover,.sky-label:focus-visible{background:#080d1ee6;color:#fff}
+.sky-label:focus-visible,.sky-controls button:focus-visible,.sky-fallback button:focus-visible{outline:2px solid #c4b5fd;outline-offset:2px}
+.sky-controls{position:absolute;right:14px;bottom:14px;display:flex;gap:6px;z-index:2}
+.sky-controls button,.sky-fallback button{min-height:36px;min-width:36px;padding:7px 12px;border:1px solid #ffffff29;border-radius:20px;background:#060911df;color:#dbe4ff;font:12px var(--font-body,sans-serif);cursor:pointer}
+.sky-controls button:hover{border-color:#c4b5fd;background:#17132b}
+.sky-caption{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 18px;padding:14px 3px;font-size:11px;line-height:1.6;color:#9ca9be}
+.sky-detail{margin:0;padding:16px;border:1px solid #ffffff1a;border-radius:12px;color:#c0cbdb;font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.sky-detail strong{display:block;margin-bottom:5px;color:#eee9ff;font-weight:500}
+.sky-loading{display:grid;place-content:center;min-height:360px;color:#9ca9be;font-size:13px}
+.sky-fallback{padding:28px;display:flex;flex-wrap:wrap;align-content:center;gap:12px;height:100%;box-sizing:border-box}
+.sky-fallback p{flex-basis:100%;font-size:14px;color:#cbd5e1}
+.report-constellation{margin:28px 0 32px}
+.report-constellation h2{font:500 20px var(--font-body,sans-serif);color:#e9e4f7;margin:0 0 18px}
+.report-constellation .sky-viewport{height:580px}
+.sky-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 0 14px;color:#b8c4dc;font-size:12px}
+.sky-toolbar>span{margin-right:auto}
+.sky-toolbar button{border:1px solid #b4a2fa55;border-radius:18px;background:#a78bfa17;color:#ddd6fe;padding:9px 14px;font:inherit;cursor:pointer}
+.sky-toolbar button:disabled{opacity:.5;cursor:default}
+.sky-toolbar button:focus-visible,.sky-agent:focus-visible{outline:2px solid #c4b5fd;outline-offset:3px}
+.sky-agent-label{color:#e2dcff;font-weight:600}
+.sky-agent-tag{display:block;margin-top:2px;color:#9ca9be;font-size:9px;font-weight:400}
+.sky-agents{display:flex;gap:8px;margin-top:12px}
+.sky-agent{flex:1;min-width:0;display:grid;grid-template-columns:8px 1fr;gap:5px 8px;text-align:left;padding:11px 12px;border:1px solid #ffffff14;border-radius:10px;background:#10131c;color:#d7dce8;font:12px var(--font-body,sans-serif);cursor:pointer}
+.sky-agent strong{font-weight:500}.sky-agent>span:last-child{grid-column:2;font-size:10px;line-height:1.4;color:#99a6bb}
+.sky-agent-dot{width:6px;height:6px;border-radius:50%;align-self:center}
+.sky-agent.is-working{border-color:#b4a2fa88;background:#a78bfa12}
+.sky-agent.is-working>span:last-child{color:#e2dcff}
+.polaris-constellation:fullscreen{box-sizing:border-box;width:100%;height:100%;display:flex;flex-direction:column;padding:20px 24px;background:#02040c;overflow:auto}
+.polaris-constellation:fullscreen .sky-viewport{height:auto;min-height:180px;flex:1;border-radius:12px}
+.polaris-constellation:fullscreen .sky-toolbar{flex-shrink:0}
+.polaris-constellation:fullscreen .sky-caption{padding:9px 3px}
+.polaris-constellation:fullscreen .sky-detail{max-height:90px;overflow:auto;flex-shrink:0}
+.polaris-constellation:fullscreen .sky-simulation{margin:0 0 8px;padding:8px 12px;flex-shrink:0}
+.sky-fixed{display:block;margin-top:3px;color:#6ee7b7;font-size:10px}
+.sky-simulation{padding:12px 14px;background:#6ee7b70c;border:1px solid #6ee7b72b;border-radius:10px;font-size:12px;line-height:1.6;color:#c4ddda}
+#p-constellation{grid-column:1/-1;min-width:0}
+.res-grid.constellation-view{grid-template-columns:minmax(0,1fr)}
+.map-panel{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:36px;padding:24px}
+.map-copy{padding:20px}
+@media(max-width:760px){
+  .map-panel{grid-template-columns:minmax(0,1fr);padding:14px;gap:12px}
+  .map-copy{padding:10px}
+  .sky-viewport,.report-constellation .sky-viewport{height:420px;border-radius:13px}
+  .sky-label{font-size:10px;max-width:112px}.sky-target{max-width:150px;font-size:12px}
+  .sky-controls{right:10px;bottom:10px}.sky-caption{font-size:10px}
+  .sky-agents{gap:5px}.sky-agent{padding:9px 7px;gap:4px 5px;font-size:11px}
+  .sky-agent>span:last-child{font-size:9px}
+  .polaris-constellation:fullscreen{padding:12px}
+}

@@ -1,13 +1,11 @@
-.DS_Store
-.next/
+supabase/.temp/
 
-# Next.js auto-generated type validators (belong in .next/types/, not source tree)
-types/validator.ts
-types/routes.d.ts
-types/cache-life.d.ts
-.pnpm-store/
+.vercel
+
+/config.js
+.env
+.env.*
+!.env.example
+
 node_modules/
-
-**/__pycache__/
-**/*.pyc
-**/*.pyotsconfig.tsbuildinfo
+dist/

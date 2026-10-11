@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-motion="on">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Polaris | Connect the dots. Find the risks.</title>
+<meta name="description" content="Connect the dots across your app's public surface. Polaris checks for exposed secrets, source maps, backend defaults and missing security headers, with evidence you can inspect."/>
+<link rel="preconnect" href="https://api.fontshare.com"/>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600&f[]=switzer@400,500,600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/constellation.css"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23080b11'/%3E%3Cpath d='m6 21 8-13 5 16 7-12M6 21l13 3' fill='none' stroke='%23e8b982'/%3E%3Cg fill='%23f3e8d9'%3E%3Ccircle cx='6' cy='21' r='2'/%3E%3Ccircle cx='14' cy='8' r='2'/%3E%3Ccircle cx='19' cy='24' r='2'/%3E%3Ccircle cx='26' cy='12' r='2'/%3E%3C/g%3E%3C/svg%3E"/>
+<style>
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:32px}body{margin:0;color:var(--txt);font:16px/1.65 var(--font-body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}button{font:inherit}h1,h2,h3,p{margin:0}h1,h2,h3{font-family:var(--font-display);font-weight:400}h1,h2{letter-spacing:-.045em;line-height:1.07}
+::selection{background:var(--acid);color:var(--ink)}:focus-visible{outline:2px solid var(--acid);outline-offset:5px}
+.wrap{width:min(1240px,calc(100% - 96px));margin-inline:auto}.skip{position:fixed;top:12px;left:12px;z-index:100;background:var(--paper);color:var(--ink);padding:12px;transform:translateY(-180%)}.skip:focus{transform:none}
+.site-nav{position:absolute;inset:0 0 auto;z-index:5;height:100px;display:flex;align-items:center;justify-content:space-between;gap:28px}
+.wordmark{display:inline-flex;align-items:center;gap:14px;font-size:21px;font-weight:500;letter-spacing:.12em;color:var(--paper)}.wordmark svg{width:30px;height:30px}
+.nav-links,.nav-actions{display:flex;align-items:center;gap:32px}.nav-links a{font-size:14px;color:#c0c3cb}.nav-links a:hover{color:var(--paper)}
+.button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 23px;border:1px solid #ded8cd44;border-radius:999px;font-size:14px;line-height:1.3;transition:background 180ms,border-color 180ms,transform 140ms}
+.button:hover{border-color:#f3e8d999;background:#f3e8d909}.button:active{transform:scale(.97)}.button.primary{background:var(--paper);border-color:var(--paper);color:#161510}.button.primary:hover{background:#fff8ed}
+.hero{position:relative;min-height:810px;height:min(940px,100svh);background:#07090e;overflow:hidden}
+.blackhole-scene{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 73% 47%,#9b653520 0%,#11141d30 32%,#07090e 62%)}
+.blackhole-scene canvas{display:block;width:100%;height:100%;position:absolute;inset:0}.blackhole-scene::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#080b11 0%,transparent 18%),linear-gradient(90deg,#080b11a8,transparent 50%)}
+.blackhole-scene[data-webgl="unavailable"] canvas{display:none}.blackhole-scene[data-webgl="unavailable"]::before{content:"";position:absolute;left:51%;top:29%;width:35%;aspect-ratio:1;border-radius:50%;background:#080b11;box-shadow:0 0 15px 3px #e8b982b3,0 0 65px 5px #d17f3b55;transform:rotate(-18deg)}
+.hero-content{position:relative;z-index:2;padding-top:clamp(225px,28vh,290px);pointer-events:none}.hero-content>*{pointer-events:auto}
+.hero h1{font-size:clamp(54px,5.6vw,82px);font-weight:300;max-width:9.5em;color:#f7f0e6}
+.hero p{max-width:380px;color:#abb1bd;font-size:17px;line-height:1.75;margin-top:28px}.hero-actions{display:flex;align-items:center;gap:15px;margin-top:34px}
+.hero-note{display:flex;align-items:center;gap:9px;color:#929ba9;font-size:12px;margin-top:20px}.hero-note i{width:5px;height:5px;border-radius:50%;background:var(--acid)}
+.orbit-label{position:absolute;z-index:2;right:10%;bottom:23%;font-size:11px;color:#a99985;letter-spacing:.08em}.orbit-label::before{content:"";display:inline-block;width:44px;height:1px;background:#baa38766;vertical-align:middle;margin-right:12px}
+.hero-bottom{position:absolute;left:0;right:0;bottom:34px;z-index:2;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#959eac}.hero-bottom a{display:flex;gap:14px;align-items:center;min-height:44px}.hero-bottom svg{width:16px;height:16px}
+.section{position:relative;z-index:2;padding:112px 0}.intro{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:start;border-top:1px solid var(--line)}
+.section h2{font-size:clamp(34px,4vw,54px);color:var(--paper)}.section p{color:var(--txt-dim);max-width:530px;font-size:16px}.intro p+p{margin-top:18px}
+.map-section{padding-top:0;padding-bottom:110px}.map-panel{display:grid;grid-template-columns:1.25fr 1fr;gap:70px;align-items:center;background:linear-gradient(130deg,#151b2570,#080b1170);border:1px solid var(--line);border-radius:24px;padding:48px 56px}
+.map-copy h2{font-size:36px;margin-bottom:23px}.map-copy p{font-size:15px}.map-key{display:flex;gap:18px;align-items:center;font-size:11px;color:#8e99ab;margin-top:32px}.map-key span{display:flex;align-items:center;gap:7px}.map-key i{height:5px;width:5px;border-radius:50%;background:var(--acid)}
+.check-list{margin-top:80px;display:grid;grid-template-columns:repeat(3,1fr);column-gap:50px;row-gap:42px}.check-list article{padding-top:22px;border-top:1px solid var(--line)}.check-list h3{font-size:19px;color:#e2d8ca;margin-bottom:11px}.check-list p{font-size:14px;line-height:1.75}
+.path-section{border-top:1px solid var(--line);display:grid;grid-template-columns:.8fr 1.2fr;gap:110px}.path-section h2{max-width:350px}.path{list-style:none;margin:0;padding:0}.path li{position:relative;display:grid;grid-template-columns:44px 1fr;gap:22px;padding-bottom:42px}.path li:last-child{padding-bottom:0}.path li:not(:last-child)::after{content:"";position:absolute;left:17px;top:39px;bottom:8px;width:1px;background:linear-gradient(#e8b98266,#c6d3e31f)}.path .step{height:35px;width:35px;border:1px solid #e8b98255;border-radius:50%;display:grid;place-items:center;font-size:12px;color:var(--acid);background:var(--ink)}.path h3{font-size:22px;margin-bottom:8px}.path p{font-size:14px}
+.closing{text-align:center;border-top:1px solid var(--line);padding-top:100px;padding-bottom:110px}.closing h2{max-width:650px;margin:0 auto 23px}.closing p{margin:0 auto 30px;max-width:480px;font-size:15px}.closing .scope{font-size:12px;max-width:570px;margin:24px auto 0;color:#8993a3}
+.site-footer{position:relative;z-index:2;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:24px;padding:30px 0 95px;color:#8e99aa;font-size:12px}.site-footer .wordmark{font-size:15px;gap:10px}.site-footer .wordmark svg{width:22px;height:22px}.footer-links{display:flex;gap:25px}
+@media(min-width:1600px){.hero-content{padding-top:270px}.hero{height:920px}}
+@media(max-width:1000px){.wrap{width:calc(100% - 64px)}.nav-links{gap:22px}.hero h1{font-size:64px}.hero-content{padding-top:255px}.intro{gap:55px}.map-panel{gap:30px;padding:38px 32px}.map-copy h2{font-size:30px}.check-list{column-gap:30px}.path-section{gap:50px}.orbit-label{right:6%;bottom:18%}}
+@media(max-width:760px){.wrap{width:calc(100% - 40px)}.site-nav{height:82px}.nav-links{display:none}.wordmark{font-size:18px}.nav-actions .button{min-height:43px;padding:10px 18px}.hero{height:auto;min-height:850px}.blackhole-scene{height:620px;bottom:auto}.blackhole-scene::after{background:linear-gradient(0deg,#080b11 0%,transparent 36%)}.hero-content{padding-top:445px;padding-bottom:125px}.hero h1{font-size:52px;max-width:11em}.hero p{font-size:15px;margin-top:22px;max-width:340px}.hero-actions{margin-top:26px;gap:12px}.hero-actions .button{padding-inline:20px}.hero-note{font-size:11px}.orbit-label{display:none}.hero-bottom{bottom:22px;font-size:11px}.hero-bottom>span{max-width:140px}.section{padding:72px 0}.intro{grid-template-columns:1fr;gap:25px}.section h2{font-size:37px}.map-section{padding-top:0}.map-panel{grid-template-columns:1fr;gap:28px;padding:24px 20px 30px;border-radius:18px}.map-copy h2{font-size:30px}.map-copy p{font-size:14px}@media(max-width:380px){.hero h1{font-size:46px}.hero-actions .button{padding-inline:17px}.check-list{grid-template-columns:1fr}.hero-bottom>span{max-width:110px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+<link rel="stylesheet" href="/sky.css"/>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="site-nav wrap" aria-label="Main navigation">
+  <a class="wordmark" href="/" aria-label="Polaris, home"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="m5 23 9-17 5 20 9-13M5 23l14 3" stroke="#e8b982" stroke-width="1"/><g fill="#f3e8d9"><circle cx="5" cy="23" r="2"/><circle cx="14" cy="6" r="2"/><circle cx="19" cy="26" r="2"/><circle cx="28" cy="13" r="2"/></g></svg>POLARIS</a>
+  <div class="nav-links"><a href="#what-we-check">What we check</a><a href="#how-it-works">How it works</a></div>
+  <div class="nav-actions"><a class="button" href="/signin.html">Log in</a></div>
+</nav>
+<main id="main">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="blackhole-scene" aria-hidden="true"><canvas></canvas></div>
+    <div class="hero-content wrap">
+      <h1 id="hero-title">Find the risks.<br/>Connect the dots.</h1>
+      <p>Your app is a constellation of code, services, and decisions. See what it exposes before someone else does.</p>
+      <div class="hero-actions"><a class="button primary" href="/signin.html?next=%2Fapp.html%3Fsetup%3Dscan">Scan your app</a><a class="button" href="#what-we-check">Explore the checks</a></div>
+      <div class="hero-note"><i aria-hidden="true"></i>Passive checks. Evidence you can inspect.</div>
+    </div>
+    <span class="orbit-label" aria-hidden="true">Look beyond the surface</span>
+    <div class="hero-bottom wrap"><span>A clearer view of your app's security.</span><a href="#what-we-check">Follow the signals <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v13m-5-5 5 5 5-5" stroke="currentColor"/></svg></a></div>
+  </section>
+  <section class="section intro wrap" id="what-we-check" aria-labelledby="intro-title">
+    <h2 id="intro-title">Small signals.<br/>A bigger picture.</h2>
+    <div><p>A key in a bundle. A source map left online. A backend that answers without an account. Security issues often hide in the connections between the things you ship.</p><p>Polaris reads your app's public surface and brings the evidence into one report, so you can see what needs attention and why.</p></div>
+  </section>
+  <section class="section map-section wrap" aria-label="Polaris scan coverage">
+    <div class="map-panel">
+      <div id="coverage-constellation" data-constellation="coverage"></div>
+      <div class="map-copy"><h2>Create a constellation<br/>from the evidence.</h2><p>Start with a URL. Polaris connects what your website serves to the checks that matter. Each confirmed finding includes the evidence behind it. If a check cannot finish, the report says so.</p><div class="map-key"><span><i></i>Your public surface</span><span>Interactive demo with sample findings</span></div></div>
+    </div>
+    <div class="check-list">
+      <article><h3>Exposed secrets</h3><p>Look for credential patterns in the page and its public JavaScript bundles.</p></article>
+      <article><h3>Shipped source maps</h3><p>Check whether public map files reveal your original source code.</p></article>
+      <article><h3>Backend access</h3><p>Inspect supported backend endpoints for data available without an account.</p></article>
+      <article><h3>Exposed routes</h3><p>Check known admin and debug paths for distinct, unauthenticated responses.</p></article>
+      <article><h3>Security headers</h3><p>Read the browser protections your website actually declares.</p></article>
+      <article><h3>Generator signals</h3><p>Identify known builder signatures to add context to your report.</p></article>
+    </div>
+  </section>
+  <section class="section path-section wrap" id="how-it-works" aria-labelledby="path-title">
+    <h2 id="path-title">From a URL<br/>to a clearer view.</h2>
+    <ol class="path">
+      <li><span class="step">1</span><div><h3>Bring your app</h3><p>Sign in and add a website you own or have permission to test. A code reference is optional.</p></div></li>
+      <li><span class="step">2</span><div><h3>Choose your checks</h3><p>Select the passive checks you want to run and confirm your authorization.</p></div></li>
+      <li><span class="step">3</span><div><h3>Follow the evidence</h3><p>Review saved findings and check activity. Generate a patch for supported findings, then review it before applying changes.</p></div></li>
+    </ol>
+  </section>
+  <section class="section closing wrap" aria-labelledby="closing-title">
+    <h2 id="closing-title">Your next release.<br/>With fewer blind spots.</h2>
+    <p>Connect the dots across what you've built. Start with the website you're about to share.</p>
+    <a class="button primary" href="/signin.html?next=%2Fapp.html%3Fsetup%3Dscan">Scan your app</a>
+    <p class="scope">Tier 1 passive checks are available now. A scan is a starting point, not a security certification. Deeper testing and automatic retesting are not yet available.</p>
+  </section>
+</main>
+<footer class="site-footer wrap">
+  <a class="wordmark" href="/" aria-label="Polaris, home">POLARIS</a><p>Make the connections. Understand what you ship.</p>
+  <div class="footer-links"><a href="#what-we-check">Checks</a><a href="/signin.html">Log in</a></div>
+</footer>
+<script type="module" src="/constellation.js"></script>
+<script type="module" src="/blackhole.js"></script>
+<script type="module" src="/assets/constellation.js"></script>
+</body>
+</html>
